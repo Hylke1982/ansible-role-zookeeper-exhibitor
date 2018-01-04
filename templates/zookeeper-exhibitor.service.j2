@@ -1,0 +1,14 @@
+[Unit]
+Description=Zookeeper Exhibitor service
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile={{zookeeperexhibitor_home}}/environment
+WorkingDirectory={{zookeeperexhibitor_home}}
+ExecStart=/bin/bash -c "{{zookeeperexhibitor_home}}/zookeeper-exhibitor-wrapper.sh"
+Type=simple
+User={{zookeeper_user}}
+
+[Install]
+WantedBy=multi-user.target

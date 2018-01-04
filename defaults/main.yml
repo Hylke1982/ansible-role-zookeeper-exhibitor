@@ -1,0 +1,9 @@
+zookeeperexhibitor_home: "/opt/zookeeper-exhibitor"
+
+zookeeperexhibitor_file: "exhibitor-1.6.0.jar"
+
+zookeeper_data_dir: /opt/zookeeper/data
+zookeeper_log_dir: /opt/zookeeper/log
+zookeeper_app_dir: /opt/zookeeper/bla
+zookeeper_group: zookeeper
+zookeeper_user: zookeeper

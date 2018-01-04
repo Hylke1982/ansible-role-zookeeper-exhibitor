@@ -1,0 +1,72 @@
+- name: "Install Java"
+  package:
+    name: "openjdk-8-jdk-headless"
+    state: "latest"
+  become: true
+
+- name: "Create exhibitor dir"
+  file:
+    path: "{{ zookeeperexhibitor_home }}"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    state: directory
+  become: true
+  
+- name: "zookeeper exhibitor app"
+  copy:
+    src: "{{ zookeeperexhibitor_file }}"
+    dest: "{{ zookeeperexhibitor_home }}/{{ zookeeperexhibitor_file }}"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: "u=rw,g=r,o=r"
+  become: true
+
+- name: "Create empty environments file"
+  copy:
+    content: ""
+    dest: "{{zookeeperexhibitor_home}}/environment"
+    force: no
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: 0555
+  become: true
+
+- name: "Copy defaults conf file"
+  template:
+    src: "defaults.conf.j2"
+    dest: "{{ zookeeperexhibitor_home }}/defaults.conf"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: 0644
+  become: true
+
+- name: "Copy wrapper executable conf file"
+  template:
+    src: "zookeeper-exhibitor-wrapper.sh.j2"
+    dest: "{{ zookeeperexhibitor_home }}/zookeeper-exhibitor-wrapper.sh"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    mode: 0744
+  become: true
+
+- name: "Copy service file"
+  template:
+    src: "zookeeper-exhibitor.service.j2"
+    dest: /etc/systemd/system/zookeeper-exhibitor.service
+    mode: 0644
+  become: true
+
+# Stop zookeeper and disable because exhibitor managed
+- name: "Stop zookeeper service"
+  service:
+    name: zookeeper.service
+    state: stopped
+    enabled: no
+  become: true
+
+- name: "Start zookeeper exhibitor service"
+  service:
+    name: zookeeper-exhibitor.service
+    state: started
+    enabled: yes
+  become: true
